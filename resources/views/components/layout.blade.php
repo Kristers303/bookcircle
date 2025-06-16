@@ -9,11 +9,11 @@
 
 </head>
 <body>
-<div class="container mt-5">
     <x-navbar title='{{ $title }}'/>
-    <h1>{{ $title }}</h1>
-    {{ $slot }}
-</div>
+    <div class="container mt-5">
+        <h1>{{ $title }}</h1>
+        {{ $slot }}
+    </div>
 
 </body>
 </html>

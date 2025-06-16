@@ -1,0 +1,70 @@
+<?php
+
+return [
+
+    'Welcome' => 'Welcome,',
+    'add_book' => 'Add book',
+    'Book_list' => 'Book list',
+    'review_edit_error' => 'You can only edit your own reviews.',
+    'review_delete_error' => 'You can only delete your own reviews.',
+
+    'Author' => 'Author',
+    'Year' => 'Year',
+    'Genre' => 'Genre',
+    'Description' => 'Description',
+    'Owner' => 'Owner',
+    'City' => 'City',
+    'Status' => 'Status',
+    'Read_more' => 'Read more',
+
+    'book_info' => 'Book information',
+    'Title' => 'Title',
+    'Created_at' => 'Created at',
+    'Last_updated' => 'Last updated',
+    'Reserve' => 'Reserve',
+    'Reserved' => 'Reserved',
+    'Not_available' => 'Not available',
+    'Book_is_reserved' => 'The book is reserved',
+    'Reserve_user' => 'Reserved by user',
+    'Name' => 'Name',
+    'Average_rating' => 'Average rating',
+    'Rating' => 'Rating',
+    'No_ratings' => 'No ratings',
+    'Submit' => 'Submit',
+    'Write_a_comment' => 'Write a comment',
+    'Add_comment' => 'Add comment',
+    'Writen_by' => 'Written by',
+    'Delete' => 'Delete',
+    'Are_you_sure_delete_com' => 'Are you sure you want to delete this comment?',
+    'Edit' => 'Edit',
+    'Delete_book' => 'Delete book',
+    'Are_you_sure_delete_book' => 'Are you sure you want to delete this book? This action cannot be undone.',
+    'Back_to_list' => 'Back to list',
+
+    'Find_book' => 'Search for a book',
+    'Find_book_placeholder' => 'Search by title, author or genre',
+    'Search' => 'Search',
+    'No_books_found' => 'No books found',
+
+    'Edit_book' => 'Edit book information',
+    'Update' => 'Update',
+    'Avilable' => 'Available',
+    'Unavailable' => 'Unavailable',
+    'Select_genre' => 'Select genre',
+
+    'Craete_book' => 'Add your book',
+    'Create' => 'Add',
+
+    'You_not_have_access_to_page' => 'You do not have access to this page.',
+    'Book_created_successfully' => 'Book successfully added!',
+    'Book_updated_successfully' => 'Book successfully updated!',
+    'Book_deleted_successfully' => 'Book successfully deleted!',
+    'Book_not_available_for_reservation' => 'This book is not available for reservation.',
+    'Book_reserved_successfully' => 'Book successfully reserved!',
+    'Comment_added_successfully' => 'Comment successfully added!',
+    'Comment_deleted_successfully' => 'Comment successfully deleted!',
+    'You_not_have_the_right_delete_comment.' => 'You do not have permission to delete this comment.',
+    'Rating_added_successfully' => 'Rating successfully added!',
+
+];
+

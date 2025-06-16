@@ -6,17 +6,27 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Book; 
 use App\Models\Genre;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Models\Activity;
+
 
 
 class BookController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+        $this->middleware('auth')->except(['index', 'show']);
+    }
     public function index()
     {
+        if (auth()->check()) {
+        $logs = Activity::causedBy(auth()->user())->latest()->get();
+        } else {
+            $logs = collect(); // Пустая коллекция
+        }
         $books = Book::all();
-        return view('books.index', compact('books'));
+        return view('books.index', compact('books', 'logs'));
     }
 
     /**
@@ -33,6 +43,9 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->user()->cannot('create')) {
+            abort(403, __('messages.You_not_have_access_to_page'));
+        }
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
@@ -43,19 +56,24 @@ class BookController extends Controller
             'status' => 'required|in:available,unavailable,reserved',
         ]);
 
-        Book::create([
+        $book=Book::create([
             'title' => $validated['title'],
             'author' => $validated['author'],
             'year' => $validated['year'],
             'genre_id' => $validated['genre_id'],
             'description' => $validated['description'],
-            'user_id' => 1, //auth()->id()
+            'user_id' => auth()->id(),
             'status' => $validated['status'],
         ]);
 
         User::where('id', auth()->id())->update(['city' => $request->input('city')]);
 
-        return redirect()->route('book.index')->with('success', 'Book created successfully!');
+        activity('book')
+            ->performedOn($book)
+            ->causedBy(auth()->user())
+            ->log('izveidots');
+
+        return redirect()->route('book.index')->with(__('messages.Book_created_successfully'));
     }
 
     /**
@@ -72,9 +90,12 @@ class BookController extends Controller
      */
     public function edit(Request $request, Book $book)
     {
-        
+        if ($request->user()->cannot('update', $book)) {
+            abort(403, __('messages.You_not_have_access_to_page'));
+        }
+
         $genres = Genre::all();
-        $user = User::findOrFail(1); //auth()->id()
+        $user = User::findOrFail(auth()->id());
         return view('books.edit', compact('book', 'genres', 'user'));
     }
 
@@ -84,6 +105,9 @@ class BookController extends Controller
     public function update(Request $request, string $id)
     {
         $book = Book::findOrFail($id);
+        if ($request->user()->cannot('update', $book)) {
+            abort(403, __('messages.You_not_have_access_to_page'));
+        }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -104,9 +128,9 @@ class BookController extends Controller
             'status' => $validated['status'],
         ]);
 
-        User::where('user_id', auth()->id())->update(['city' => $request->input('city')]);
+        User::where('id', auth()->id())->update(['city' => $request->input('city')]);
 
-        return redirect()->route('book.index')->with('success', 'Book created successfully!');
+        return redirect()->route('book.index')->with('success', __('messages.Book_updated_successfully'));
     }
 
     /**
@@ -115,8 +139,42 @@ class BookController extends Controller
     public function destroy(string $id)
     {
         $book = Book::findOrFail($id);
+        if (auth()->user()->cannot('delete', $book)) {
+            abort(403, __('messages.You_not_have_access_to_page'));
+        }
         $book->delete();
-
-        return redirect()->route('book.index')->with('success', 'Book deleted successfully!');
+        return redirect()->route('book.index')->with('success', __('messages.Book_deleted_successfully'));
     }
+
+    public function search(Request $request)
+    {
+        $query = Book::query();
+
+        if ($request->filled('q')) {
+            $search = $request->input('q');
+
+            $query->where('title', 'like', "%{$search}%")
+                ->orWhere('author', 'like', "%{$search}%")
+                ->orWhereHas('genre', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+        }
+
+        $books = $query->paginate(10);
+
+        return view('books.index', compact('books'));
+    }
+    public function reserve(Book $book)
+    {
+        if ($book->status !== 'available') {
+            return back()->with('error', __('messages.Book_not_available_for_reservation'));
+        }
+
+        $book->status = 'reserved';
+        $book->reserved_by = auth()->id();
+        $book->save();
+
+        return back()->with('success', __('messages.Book_reserved_successfully'));
+    }
+
 }
