@@ -1,6 +1,16 @@
 <x-layout>
     <x-slot name="title">
-{{__('messages.Email_address')}}    </x-slot>
+{{__('messages.add_book')}}    </x-slot>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('book.store') }}">
         @csrf
         <div class="mb-3">
@@ -18,7 +28,7 @@
         <div class="mb-3">
             <label class="form-label">{{__('messages.Genre')}}</label>
             <select name="genre_id" class="form-select">
-                <option value="">{{__('messages.Select_genre')}} Genre</option>
+                <option value="">{{__('messages.Select_genre')}}</option>
                 @foreach($genres as $genre)
                     <option value="{{ $genre->id }}" {{ old('genre_id') == $genre->id ? 'selected' : '' }}>
                         {{ $genre->name }}

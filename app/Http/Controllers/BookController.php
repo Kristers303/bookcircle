@@ -43,7 +43,7 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->user()->cannot('create')) {
+        if (auth()->user()->cannot('create', Book::class)) {
             abort(403, __('messages.You_not_have_access_to_page'));
         }
         $validated = $request->validate([
@@ -67,11 +67,6 @@ class BookController extends Controller
         ]);
 
         User::where('id', auth()->id())->update(['city' => $request->input('city')]);
-
-        activity('book')
-            ->performedOn($book)
-            ->causedBy(auth()->user())
-            ->log('izveidots');
 
         return redirect()->route('book.index')->with(__('messages.Book_created_successfully'));
     }
@@ -159,10 +154,15 @@ class BookController extends Controller
                     $q->where('name', 'like', "%{$search}%");
                 });
         }
+        if (auth()->check()) {
+            $logs = Activity::causedBy(auth()->user())->latest()->get();
+        } else {
+            $logs = collect(); // Пустая коллекция
+        }
 
         $books = $query->paginate(10);
 
-        return view('books.index', compact('books'));
+        return view('books.index', compact('books', 'logs'));
     }
     public function reserve(Book $book)
     {

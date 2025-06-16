@@ -16,7 +16,7 @@ Route::get('/lang/{locale}', LanguageController::class);
 
 
 Route::get('/books/search', [BookController::class, 'search'])->name('book.search');
-Route::resource('book', BookController::class)->only(['index', 'show']);
+Route::resource('book', BookController::class);
 
 Route::middleware('auth')->group(function() {
     Route::resource('book', BookController::class)->except(['index', 'show']);

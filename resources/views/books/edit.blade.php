@@ -2,6 +2,15 @@
     <x-slot name="title">
     {{__('messages.Edit_book')}}
     </x-slot>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form action="{{ action( [App\Http\Controllers\BookController::class, 'update'], $book->id) }}" method="POST">
         @csrf
         @method('PUT')

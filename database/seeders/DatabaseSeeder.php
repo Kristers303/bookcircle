@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         Genre::create(['name' => 'History']);
         User::create([
         'name' => 'Admin User',
-        'email' => 'admin@gmail.com',
+        'email' => 'admin@example.com',
         'password' => bcrypt('adminpassword'),
         'role' => 'admin',
         'city' => 'Riga',
@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
             'genre_id' => 1,
             'description' => 'A futuristic society driven by consumerism and control.',
             'user_id' => 1,
-            'status' => 'borrowed',
+            'status' => 'available',
         ]);
 
 
