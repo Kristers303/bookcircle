@@ -16,14 +16,14 @@ class BookController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->except(['index', 'show']);
+        $this->middleware('auth')->except(['index', 'show', 'search']);
     }
     public function index()
     {
         if (auth()->check()) {
         $logs = Activity::causedBy(auth()->user())->latest()->get();
         } else {
-            $logs = collect(); // Пустая коллекция
+            $logs = collect();
         }
         $books = Book::all();
         return view('books.index', compact('books', 'logs'));
@@ -157,7 +157,7 @@ class BookController extends Controller
         if (auth()->check()) {
             $logs = Activity::causedBy(auth()->user())->latest()->get();
         } else {
-            $logs = collect(); // Пустая коллекция
+            $logs = collect();
         }
 
         $books = $query->paginate(10);
